@@ -984,6 +984,16 @@ body.view-month3 #month1-start,body.view-month3 #month2-content,body.view-month3
 #month3-content .m3-song-link:hover,#month3-content .m3-song-link:focus-visible{transform:translateY(-3px);box-shadow:0 15px 35px #13091e77}
 #month3-content .m3-song-note{margin-top:24px;color:#f4c2d6;font-style:italic}
 @media(prefers-reduced-motion:reduce){#month3-content .m3-cursor-line b,#month3-content .m3-song-symbol{animation:none}}
+
+/* Acceso romántico con contraseña */
+#erika-access-form{display:flex;flex-direction:column;align-items:center;gap:11px;margin-top:16px}
+.erika-password-label{font-size:.91rem;font-weight:700;color:#79384f}
+.erika-password-wrap{position:relative;width:min(100%,290px)}
+#erika-password{box-sizing:border-box;width:100%;border:1.5px solid #e9bdca;border-radius:999px;padding:14px 48px 14px 20px;background:#fff;color:#623244;font-size:1rem;text-align:center;letter-spacing:2px;outline:none;box-shadow:0 5px 20px #b65a7920}
+#erika-password:focus{border-color:#c86c8e;box-shadow:0 0 0 3px #f4c4d7a6}
+#erika-password::placeholder{letter-spacing:normal;color:#ad8b98}
+.erika-show-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:1.15rem;padding:7px}
+.erika-password-error{min-height:1.1em;margin:0!important;color:#a52f54!important;font-size:.83rem!important}
 </style></head>
 <body>
 <div class="screen" id="lock">
@@ -992,7 +1002,15 @@ body.view-month3 #month1-start,body.view-month3 #month2-content,body.view-month3
 <div class="eyebrow">Acceso privado</div>
 <h1 class="serif lock-title">Para Erika</h1>
 <p>Hay recuerdos que merecen un lugar especial.<br/>Este es el nuestro.</p>
-<button class="btn" onclick="unlock()">Entrar ❤️</button>
+<form id="erika-access-form" onsubmit="return checkErikaPassword(event)" autocomplete="off">
+<label for="erika-password" class="erika-password-label">Contraseña 🔐</label>
+<div class="erika-password-wrap">
+<input id="erika-password" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Escribe la contraseña" autocomplete="off" required aria-describedby="erika-password-error" />
+<button class="erika-show-password" type="button" onclick="toggleErikaPassword()" aria-label="Mostrar u ocultar contraseña">👁️</button>
+</div>
+<p id="erika-password-error" class="erika-password-error" role="alert" aria-live="polite"></p>
+<button class="btn" type="submit">Entrar ❤️</button>
+</form>
 <p style="margin-top:16px;font-size:.78rem;color:#9d7a84">21 · 07 · 2026</p>
 </div>
 </div>
@@ -1431,6 +1449,24 @@ if(favoriteEnvelope){
   });
 }
 
+function toggleErikaPassword(){
+  const input=document.getElementById('erika-password');
+  input.type=input.type==='password'?'text':'password';
+}
+function checkErikaPassword(event){
+  event.preventDefault();
+  const input=document.getElementById('erika-password');
+  const error=document.getElementById('erika-password-error');
+  if(input.value.trim()==='210726'){
+    error.textContent='';
+    unlock();
+  }else{
+    error.textContent='Segura que eres Erika? 💗 Inténtalo otra vez.';
+    input.value='';
+    input.focus();
+  }
+  return false;
+}
 function unlock(){
   document.getElementById('lock').classList.add('hide');
   document.getElementById('months-menu').classList.add('show');
